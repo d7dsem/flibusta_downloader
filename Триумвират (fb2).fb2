@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:l="http://www.w3.org/1999/xlink">
-  <description>
-    <title-info>
-      <genre>fiction</genre>
-      <author><first-name>Unknown</first-name><last-name>Author</last-name></author>
-      <book-title>Триумвират (fb2)</book-title>
-      <lang>ru</lang>
-    </title-info>
-  </description>
-<body>
-<section>
+
+
+<description>
+<title-info>
+    <genre>fiction</genre>
+    <author><first-name>unk</first-name><last-name>unk</last-name></author>
+    <book-title>Триумвират (fb2)</book-title>
+    <lang>ru</lang>
+</title-info>
+</description>
+
+<body id="book">
 <p>Путь Стратега 5. Триумвират</p>
 <p>Глава 1</p>
 <p>Два идеала</p>
@@ -3898,10 +3900,6 @@
 <p>И Божество Смерти исчезло, обернувшись туманом.</p>
 <p>Я остался в компании сирен и мертвого врага. На востоке загорался рассвет. Антавий Сагион обещал сегодня не сильно терзать так ненавидимый им город. Над Канртегом восходило солнце.</p>
 <p>КОНЕЦ ПЯТОГО ТОМА, ПРОДОЛЖЕНИЕ СКОРО.</p>
-</section>
-<body>
-<title>Зміст</title>
-</body>
-</section>
+
 </body>
 </FictionBook>

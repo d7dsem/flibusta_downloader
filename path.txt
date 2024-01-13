@@ -1,0 +1,16 @@
+C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;
+C:\WINDOWS\system32;C:\WINDOWS;
+C:\WINDOWS\System32\Wbem;
+C:\WINDOWS\System32\WindowsPowerShell\v1.0\;
+C:\Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static;
+C:\WINDOWS\System32\OpenSSH\;c:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin;
+C:\Program Files\dotnet\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;
+C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;
+C:\Program Files\Git\cmd;
+C:\Program Files\Go\bin;
+C:\Users\dima\AppData\Local\Microsoft\WindowsApps;
+C:\Users\dima\.dotnet\tools;
+D:\Python\Python38\;
+D:\Microsoft VS Code\bin;D:\Python\repos\usefull-stuff;
+D:\‘\mingw64\bin;
+C:\Users\dima\go\bin 

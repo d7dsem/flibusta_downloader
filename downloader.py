@@ -16,42 +16,42 @@ def get_book_name(soup: BeautifulSoup) -> str:
     else:
         return "unk"
 
-def create_fb2_header(title: str) -> str:
+def create_fb2_header() -> str:
     return f'''<?xml version="1.0" encoding="UTF-8"?>
 <FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:l="http://www.w3.org/1999/xlink">
-  <description>
-    <title-info>
-      <genre>fiction</genre>
-      <author><first-name>Unknown</first-name><last-name>Author</last-name></author>
-      <book-title>{title}</book-title>
-      <lang>ru</lang>
-    </title-info>
-  </description>
-<body>
-'''
-def create_fb2_footer() -> str:
-    return '''
-</body>
-</FictionBook>
+
 '''
 
-def save_paragraphs_as_FB2(book_name: str, paragraphs: List[Tag]) -> None:
+def create_fb2_description(title: str, lang: str = "ru", name1: str = "unk", name2: str = "unk") -> str:
+    return f'''
+<description>
+<title-info>
+    <genre>fiction</genre>
+    <author><first-name>{name1}</first-name><last-name>{name2}</last-name></author>
+    <book-title>{title}</book-title>
+    <lang>{lang}</lang>
+</title-info>
+</description>
+'''
+
+
+def create_fb2_footer() -> str:
+    return '''</FictionBook>'''
+
+def save_only_paragraphs_as_FB2(book_name: str, paragraphs: List[Tag]) -> None:
     fb2_content: str = create_fb2_header(book_name)
     fb2_content += ''.join(f'<p>{paragraph.text.strip()}</p>\n' for paragraph in paragraphs)
     fb2_content += create_fb2_footer()
     with open(f'{book_name}.fb2', 'w', encoding='utf-8') as file:
         file.write(fb2_content)
 
-def save_fb2_content(book_name: str, toc: List[str], content: List[str]) -> None:
+def save_fb2(book_name: str, bodies: List[str]) -> None:
     file_name = f'{book_name}.fb2'
     
     with open(file_name, 'w', encoding='utf-8') as file:
-        file.write(create_fb2_header(book_name))
-        file.writelines(content)
-        if toc:  # Перевірка, чи зміст не порожній
-            file.write('<body>\n<title>Зміст</title>\n')
-            file.writelines(toc)
-            file.write('</body>\n')
+        file.write(create_fb2_header())
+        file.write(create_fb2_description(book_name))
+        file.writelines(bodies)
         file.write(create_fb2_footer())
         print(f"saved as '{file_name}'")
 
@@ -96,13 +96,13 @@ def extract_paragraphs_only(soup: BeautifulSoup) -> List[str]:
 # fb2_body.append(f'<p></p>\n')
 
             
-def extract_book(soup: BeautifulSoup) -> Tuple[List[str], List[str]]:
+def create_body(soup: BeautifulSoup) -> List[str]:
     elements = soup.find_all(re.compile('^(h[1-6]|p)$'), class_='book')
     fb2_body: List[str] = []
     toc: List[str] = []
     chapter_counter: int = 1
     chapter_open = False
-
+    fb2_body.append('\n<body id="book">\n')
     for element in elements:
         if element.name.startswith('h'):
             if chapter_open:
@@ -110,9 +110,15 @@ def extract_book(soup: BeautifulSoup) -> Tuple[List[str], List[str]]:
             chapter_title = element.text.strip()
             chapter_id = f'chapter{chapter_counter}'
             toc.append(f'<p><a l:href="#{chapter_id}">{chapter_title}</a></p>\n')
+            
+            fb2_body.append('<empty-line/>\n')
+            fb2_body.append('<empty-line/>\n')
             fb2_body.append(f'<section id="{chapter_id}">\n')
             fb2_body.append(f'<title>{chapter_title}</title>\n')  # Додавання заголовка глави
             fb2_body.append(f'<p><strong>{chapter_title}</strong></p>\n')  # Додавання заголовка в текст книги
+            fb2_body.append('<empty-line/>\n')
+            fb2_body.append('<empty-line/>\n')
+            
             chapter_counter += 1
             chapter_open = True
         else:
@@ -122,7 +128,20 @@ def extract_book(soup: BeautifulSoup) -> Tuple[List[str], List[str]]:
     if chapter_open:
         fb2_body.append('</section>\n')  # Закриття останньої глави
 
-    return toc, fb2_body
+    fb2_body.append('\n</body>\n')
+    fb2_body.append('\n')
+    if toc:        
+        fb2_body.append('\n<body id="toc">\n')
+        fb2_body.append('<empty-line/>\n')
+        fb2_body.append('<empty-line/>\n')
+        # fb2_body.append(f'<section id="TOC">\n')
+        fb2_body.append(f'<p>Table of content</p>\n')
+        fb2_body.append('<empty-line/>\n')
+        fb2_body.extend(toc)
+        # fb2_body.append('</section>\n')
+        fb2_body.append('\n</body>\n')
+        
+    return fb2_body
 
 
 def get_book_from_flibusta(url):
@@ -139,8 +158,8 @@ def get_book_from_flibusta(url):
     book_name = get_book_name(soup)
     print(f"   Book='{book_name}' - ", end=" ")
 
-    toc, content = extract_book(soup)
-    save_fb2_content(book_name, toc, content)
+    bodies = create_body(soup)
+    save_fb2(book_name, bodies)
 
 
 # get_book_from_flibusta("http://flibusta.site/b/759596/read")
@@ -161,8 +180,8 @@ if __name__ == "__main__":
         get_book_from_flibusta(url)
         print()
     else:
-       for i, url in enumerate(urls):
-           print(f"{i+1:2} Url={url}")
-           get_book_from_flibusta(url)
-           print()
-           
+        for i, url in enumerate(urls):
+            print(f"{i+1:2} Url={url}")
+            get_book_from_flibusta(url)
+            print()
+            break
